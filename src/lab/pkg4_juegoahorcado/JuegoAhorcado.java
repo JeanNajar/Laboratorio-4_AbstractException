@@ -1,5 +1,10 @@
+
+
+
 package lab.pkg4_juegoahorcado;
 
-public class JuegoAhorcado {
-    
+public interface JuegoAhorcado {
+    void inicializarPalabraSecreta();
+    void jugar();
+
 }
