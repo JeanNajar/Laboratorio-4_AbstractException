@@ -30,7 +30,8 @@ public class AhoracadoGui extends JFrame {
     private JTextField         txtNuevaPalabra;
     private JLabel             lblAdminMensaje;
 
-    private JTextField txtPalabraFija;
+    private JList<String> listaPalabrasFija;
+    private DefaultListModel<String> modeloListaFija;
     private JLabel     lblPalabraFijaError;
 
     private JuegoAhorcadoBase  juego;
@@ -149,18 +150,26 @@ public class AhoracadoGui extends JFrame {
     }
 
     private JPanel crearPanelPalabraFija() {
-        JPanel panel = panelBeige(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(12, 10, 12, 10);
-        gbc.fill   = GridBagConstraints.HORIZONTAL;
+        JPanel panel=panelBeige(new GridBagLayout());
+        GridBagConstraints gbc=new GridBagConstraints();
+        gbc.insets=new Insets(12, 10, 12, 10);
+        gbc.fill=GridBagConstraints.BOTH;
 
         JLabel titulo = crearTitulo("Palabra Fija", 36);
 
-        JLabel instruccion = new JLabel("Escribe la palabra secreta:", SwingConstants.CENTER);
+        JLabel instruccion = new JLabel("Selecciona la palabra secreta de la lista:", SwingConstants.CENTER);
         instruccion.setFont(new Font("Georgia", Font.ITALIC, 17));
         instruccion.setForeground(new Color(0x444444));
 
-        txtPalabraFija    = crearCampoTexto(18);
+        modeloListaFija = new DefaultListModel<>();
+        listaPalabrasFija = new JList<>(modeloListaFija);
+        listaPalabrasFija.setFont(new Font("Georgia", Font.PLAIN, 16));
+        listaPalabrasFija.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listaPalabrasFija.setBackground(ROJO_CLARO);
+        listaPalabrasFija.setForeground(ROJO);
+        listaPalabrasFija.setBorder(BorderFactory.createLineBorder(ROJO, 2));
+        JScrollPane scrollLista = new JScrollPane(listaPalabrasFija);
+        scrollLista.setPreferredSize(new Dimension(350, 200));
         lblPalabraFijaError = new JLabel(" ", SwingConstants.CENTER);
         lblPalabraFijaError.setFont(new Font("Georgia", Font.BOLD, 14));
         lblPalabraFijaError.setForeground(ROJO);
@@ -168,19 +177,21 @@ public class AhoracadoGui extends JFrame {
         JButton btnJugar  = crearBoton("Jugar", 220, 50);
         JButton btnVolver = crearBoton("Volver", 220, 40);
         btnVolver.setFont(new Font("Georgia", Font.PLAIN, 14));
-
-        gbc.gridy = 0; panel.add(titulo,               gbc);
-        gbc.gridy = 1; panel.add(instruccion,           gbc);
-        gbc.gridy = 2; panel.add(txtPalabraFija,        gbc);
-        gbc.gridy = 3; panel.add(lblPalabraFijaError,   gbc);
-        gbc.gridy = 4; panel.add(btnJugar,              gbc);
-        gbc.gridy = 5; panel.add(btnVolver,             gbc);
-
-        btnJugar .addActionListener(e -> iniciarJuegoFijo());
+        gbc.gridy = 0; gbc.weighty = 0; panel.add(titulo, gbc);
+        gbc.gridy = 1; gbc.weighty = 0; panel.add(instruccion, gbc);
+        gbc.gridy = 2; gbc.weighty = 1; panel.add(scrollLista, gbc);
+        gbc.gridy = 3; gbc.weighty = 0; panel.add(lblPalabraFijaError, gbc);
+        gbc.gridy = 4; gbc.weighty = 0; panel.add(btnJugar, gbc);
+        gbc.gridy = 5; gbc.weighty = 0; panel.add(btnVolver, gbc);
+        btnJugar.addActionListener(e -> iniciarJuegoFijo());
         btnVolver.addActionListener(e -> irAMenu());
-
-
-        txtPalabraFija.addActionListener(e -> iniciarJuegoFijo());
+        listaPalabrasFija.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    iniciarJuegoFijo();
+                }
+            }
+        });
 
         return panel;
     }
@@ -368,10 +379,21 @@ public class AhoracadoGui extends JFrame {
     }
 
     private void irAPantallaFija() {
-        txtPalabraFija.setText("");
+        modeloListaFija.clear();
+        if (admin.getCantidadPalabras() == 0) {
+            JOptionPane.showMessageDialog(this,
+                "No hay palabras disponibles. Agrega palabras desde el menú de administración.",
+                "Lista vacía", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        for (String p : admin.obtenerPalabras()) {
+            modeloListaFija.addElement(p);
+        }
+        
         lblPalabraFijaError.setText(" ");
         cardLayout.show(contenedor, "fija");
-        txtPalabraFija.requestFocus();
+        listaPalabrasFija.requestFocus();
     }
 
     private void irAAdmin() {
@@ -401,21 +423,15 @@ public class AhoracadoGui extends JFrame {
     }
 
     private void iniciarJuegoFijo() {
-        String palabra = txtPalabraFija.getText().trim();
-        if (palabra.isEmpty()) {
-            lblPalabraFijaError.setText("Debes ingresar una palabra.");
+        String palabraSeleccionada = listaPalabrasFija.getSelectedValue();
+        
+        if (palabraSeleccionada == null || palabraSeleccionada.isEmpty()) {
+            lblPalabraFijaError.setText("Debes seleccionar una palabra de la lista.");
             return;
         }
-        if (palabra.length() < 2) {
-            lblPalabraFijaError.setText("La palabra debe tener al menos 2 letras.");
-            return;
-        }
-        if (!palabra.matches("[a-zA-Z\u00e0-\u00fc\u00c0-\u00dc ]+")) {
-            lblPalabraFijaError.setText("Solo se permiten letras.");
-            return;
-        }
-        juego = new JuegoAhorcadoFijo(palabra);
-        lblModoJuego.setText("Modo: Palabra Fija");
+        
+        juego = new JuegoAhorcadoFijo(palabraSeleccionada);
+        lblModoJuego.setText("Modo: Palabra Fija - (" + palabraSeleccionada + ")");
         prepararPantallaJuego();
     }
 
