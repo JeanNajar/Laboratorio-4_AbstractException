@@ -9,5 +9,7 @@ package lab.pkg4_juegoahorcado;
  * @author janinadiaz
  */
 public interface JuegoAhorcado {
+    void inicializarPalabraSecreta();
+    void jugar();
     
 }
