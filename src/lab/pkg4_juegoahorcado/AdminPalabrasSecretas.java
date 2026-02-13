@@ -62,4 +62,16 @@ public class AdminPalabrasSecretas {
         random=new Random();
         cargarPalabras();
     }
+
+  public AdminPalabrasSecretas(ArrayList<String> listaPalabras) {
+        palabras = new ArrayList<>();
+        random   = new Random();
+        for (String p : listaPalabras) {
+            try {
+                agregarPalabra(p);
+            } catch (PalabraDuplicadaException e) {
+                System.out.println("Duplicada ignorada: " + e.getMessage());
+            }
+        }
+    }
 }

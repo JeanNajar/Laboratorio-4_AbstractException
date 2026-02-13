@@ -6,13 +6,13 @@ public abstract class JuegoAhorcadoBase implements JuegoAhorcado {
 
     protected String palabraSecreta;
     protected String palabraActual;
-    protected int intentos;
+    public    int intentos;      
     protected final int limiteIntentos = 6;
     protected ArrayList<Character> letrasUsadas;
     protected ArrayList<String> figuraAhorcado;
 
     public JuegoAhorcadoBase() {
-        letrasUsadas = new ArrayList<>();
+        letrasUsadas  = new ArrayList<>();
         figuraAhorcado = new ArrayList<>();
         inicializarFiguraAhorcado();
     }
@@ -21,11 +21,14 @@ public abstract class JuegoAhorcadoBase implements JuegoAhorcado {
     protected abstract boolean verificarLetra(char letra);
     protected abstract boolean hasGanado();
 
-
-    public String getPalabraActual()          { return palabraActual; }
-    public String getPalabraSecreta()         { return palabraSecreta; }
-    public int getIntentos()                  { return intentos; }
-    public ArrayList<Character> getLetrasUsadas() { return new ArrayList<>(letrasUsadas); }
+    public String getPalabraActual()    
+    { return palabraActual; }
+    public String getPalabraSecreta()         
+    { return palabraSecreta; }
+    public int    getIntentos()            
+    { return intentos; }
+    public ArrayList<Character> getLetrasUsadas() 
+    { return new ArrayList<>(letrasUsadas); }
 
     private void inicializarFiguraAhorcado() {
         figuraAhorcado.add(
@@ -95,17 +98,19 @@ public abstract class JuegoAhorcadoBase implements JuegoAhorcado {
 
     public String getFiguraActual() {
         int etapa = limiteIntentos - intentos;
+        if (etapa < 0) etapa = 0;
+        if (etapa >= figuraAhorcado.size()) etapa = figuraAhorcado.size() - 1;
         return figuraAhorcado.get(etapa);
     }
 
     public void procesarLetra(char letra) throws LetraInvalidaException, LetraRepetidaException {
         if (!Character.isLetter(letra)) {
-            throw new LetraInvalidaException("Debe ingresar una letra valida");
+            throw new LetraInvalidaException("'" + letra + "' no es una letra v\u00e1lida");
         }
         letra = Character.toLowerCase(letra);
 
         if (letrasUsadas.contains(letra)) {
-            throw new LetraRepetidaException("Esta letra ya fue ingresada");
+            throw new LetraRepetidaException("La letra '" + Character.toUpperCase(letra) + "' ya fue usada");
         }
 
         letrasUsadas.add(letra);
