@@ -1,6 +1,10 @@
-private String palabraFija;
+package lab.pkg4_juegoahorcado;
+
+
+public class JuegoAhorcadoFijo extends JuegoAhorcadoBase {
+    private String palabraFija;
     
-    public AhorcadoFijo(String palabra) {
+    public JuegoAhorcadoFijo(String palabra) {
         super();
         this.palabraFija = palabra.toUpperCase();
         inicializarPalabraSecreta();
@@ -35,14 +39,15 @@ private String palabraFija;
         return palabraSecreta.contains(String.valueOf(letra));
     }
     
+
     @Override
     protected boolean hasGanado() {
         return !palabraActual.contains("_");
     }
     
+
     @Override
     public void jugar() {
-        
         System.out.println("Juego del Ahorcado - Palabra Fija");
         System.out.println("Palabra: " + palabraActual);
     }
