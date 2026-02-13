@@ -19,6 +19,7 @@ public class AdminPalabrasSecretas {
         if(palabras.contains(palabraMinuscula)){
             throw new PalabraDuplicadaException("La palabra '"+palabra+"' ya existe en la lista");
         }
+        palabras.add(palabraMinuscula);
     }
     public String obtenerPalabraRandm() throws ListaVaciaException{
         if(palabras.isEmpty()){
@@ -38,17 +39,17 @@ public class AdminPalabrasSecretas {
         try{
             agregarPalabra("programacion");
             agregarPalabra("computadora");
-            agregarPalabra("Netbeans");
+            agregarPalabra("netbeans");
             agregarPalabra("internet");
             agregarPalabra("tecnologia");
-            agregarPalabra("frijoles");
+            agregarPalabra("whatsapp");
             agregarPalabra("sueter");
             agregarPalabra("destornillador");
             agregarPalabra("supercalifragilisticoespialidoso");
             agregarPalabra("aplicacion");
-            agregarPalabra("internet");
-            agregarPalabra("software y hardware");
-            agregarPalabra("paginas web");
+            agregarPalabra("algoritmo");
+            agregarPalabra("software");
+            agregarPalabra("hardware");
             agregarPalabra("configuraciones");
             
         }
