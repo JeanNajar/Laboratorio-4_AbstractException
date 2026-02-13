@@ -15,7 +15,7 @@ public class AdminPalabrasSecretas {
     private Random random;
     
     public void agregarPalabra(String palabra) throws PalabraDuplicadaException{
-        String palabraMinuscula=palabra.toLowerCase();
+        String palabraMinuscula=palabra.toLowerCase().trim();
         if(palabras.contains(palabraMinuscula)){
             throw new PalabraDuplicadaException("La palabra '"+palabra+"' ya existe en la lista");
         }
